@@ -18,20 +18,31 @@ class UsageStatsCollector(private val context: Context) {
         context.getSystemService(Context.USAGE_STATS_SERVICE) as? UsageStatsManager
     private val packageManager: PackageManager = context.packageManager
 
-    fun collectLastHour(): CollectionResult {
+    fun collectLastHour(): CollectionResult = collect(3_600_000)
+
+    fun collectFrom(sinceEpochMillis: Long): CollectionResult {
+        val duration = System.currentTimeMillis() - sinceEpochMillis
+        return if (duration > 0) collect(duration) else CollectionResult(emptyList(), emptyList(), emptyList())
+    }
+
+    private fun collect(durationMs: Long): CollectionResult {
         val now = System.currentTimeMillis()
-        val oneHourAgo = now - 3_600_000
+        val since = now - durationMs
 
         if (usageStatsManager == null) {
             Log.w(TAG, "UsageStatsManager not available")
             return CollectionResult(emptyList(), emptyList(), emptyList())
         }
 
+        val usageEvents = usageStatsManager.queryEvents(since, now)
+        if (usageEvents == null) {
+            Log.w(TAG, "queryEvents returned null — PACKAGE_USAGE_STATS not granted?")
+            return CollectionResult(emptyList(), emptyList(), emptyList())
+        }
+
         val sessions = mutableListOf<AppSession>()
         val dailyUsages = mutableMapOf<String, DailyUsage>()
         val events = mutableListOf<UsageEvent>()
-
-        val usageEvents = usageStatsManager.queryEvents(oneHourAgo, now)
 
         val eventMap = mutableMapOf<String, MutableList<Long>>()
 

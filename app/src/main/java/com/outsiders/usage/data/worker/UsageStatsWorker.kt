@@ -25,8 +25,26 @@ class UsageStatsWorker(
 
             // Insert collected data
             db.appSessionDao().insertAll(result.sessions)
-            db.dailyUsageDao().insertAll(result.dailyUsages)
             db.usageEventDao().insertAll(result.events)
+
+            // Accumulate daily usage instead of replacing
+            for (usage in result.dailyUsages) {
+                val existing = db.dailyUsageDao().getUsageForPackageAndDate(
+                    usage.packageName, usage.date
+                )
+                if (existing != null) {
+                    db.dailyUsageDao().insertAll(
+                        listOf(
+                            existing.copy(
+                                totalMinutes = existing.totalMinutes + usage.totalMinutes,
+                                openCount = existing.openCount + usage.openCount
+                            )
+                        )
+                    )
+                } else {
+                    db.dailyUsageDao().insertAll(listOf(usage))
+                }
+            }
 
             Log.i(TAG, "Collected ${result.sessions.size} sessions, " +
                     "${result.dailyUsages.size} daily records, ${result.events.size} events")
