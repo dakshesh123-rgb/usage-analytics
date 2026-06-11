@@ -27,7 +27,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         initViewModels()
-        UsageStatsWorker.enqueuePeriodic(this)
+        UsageStatsWorker.enqueue(this)
 
         setContent {
             UsageAnalyticsTheme {

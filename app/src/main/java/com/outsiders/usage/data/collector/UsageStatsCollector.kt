@@ -44,7 +44,7 @@ class UsageStatsCollector(private val context: Context) {
             val timeStamp = event.timeStamp
 
             when (eventType) {
-                UsageEvents.MOVE_TO_FOREGROUND -> {
+                UsageEvents.Event.MOVE_TO_FOREGROUND -> {
                     events.add(
                         UsageEvent(
                             packageName = packageName,
@@ -54,7 +54,7 @@ class UsageStatsCollector(private val context: Context) {
                     )
                     eventMap.getOrPut(packageName) { mutableListOf() }.add(timeStamp)
                 }
-                UsageEvents.MOVE_TO_BACKGROUND -> {
+                UsageEvents.Event.MOVE_TO_BACKGROUND -> {
                     events.add(
                         UsageEvent(
                             packageName = packageName,

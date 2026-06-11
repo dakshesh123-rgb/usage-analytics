@@ -61,13 +61,13 @@ fun DashboardScreen(viewModel: DashboardViewModel, modifier: Modifier = Modifier
         // Stat cards row
         Row(modifier = Modifier.fillMaxWidth()) {
             StatCard(
-                label = "Total Time",
+                title = "Total Time",
                 value = "${state.dayOverDay?.todayMinutes ?: 0}m",
                 modifier = Modifier.weight(1f)
             )
             Spacer(modifier = Modifier.width(12.dp))
             StatCard(
-                label = "Apps Used",
+                title = "Apps Used",
                 value = "${state.topApps.size}",
                 modifier = Modifier.weight(1f)
             )
@@ -127,9 +127,9 @@ fun DashboardScreen(viewModel: DashboardViewModel, modifier: Modifier = Modifier
                     val barHeight = (bucket.eventCount.toFloat() / maxCount) * size.height
                     drawRect(
                         brush = Brush.verticalGradient(
-                            listOf(Cyan, Gold),
-                            start = Offset(0f, size.height),
-                            end = Offset(0f, 0f)
+                            colors = listOf(Cyan, Gold),
+                            startY = size.height,
+                            endY = 0f
                         ),
                         topLeft = Offset(hour * barWidth + 2f, size.height - barHeight),
                         size = Size(barWidth - 4f, barHeight)
