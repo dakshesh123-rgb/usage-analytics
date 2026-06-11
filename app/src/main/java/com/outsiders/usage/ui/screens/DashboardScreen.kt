@@ -44,6 +44,25 @@ fun DashboardScreen(viewModel: DashboardViewModel, modifier: Modifier = Modifier
         return
     }
 
+    if (state.topApps.isEmpty()) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(
+                    text = "No usage data yet",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "Grant Usage Access permission in Settings\nto start tracking your app usage.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+        return
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()

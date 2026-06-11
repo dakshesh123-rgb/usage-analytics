@@ -42,6 +42,34 @@ class MainActivity : ComponentActivity() {
         UsageStatsWorker.enqueue(this)
 
         // Immediate data collection so UI isn't empty on first launch
+        collectAndRefresh()
+
+        setContent {
+            UsageAnalyticsTheme {
+                Surface(modifier = Modifier.fillMaxSize()) {
+                    AppNavigation(
+                        dashboardViewModel = dashboardViewModel,
+                        appsViewModel = appsViewModel,
+                        insightsViewModel = insightsViewModel
+                    )
+                }
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Re-collect when returning from Settings → Usage Access
+        collectAndRefresh()
+    }
+
+    private fun initViewModels() {
+        dashboardViewModel = ViewModelProvider(this).get(DashboardViewModel::class.java)
+        appsViewModel = ViewModelProvider(this).get(AppsViewModel::class.java)
+        insightsViewModel = ViewModelProvider(this).get(InsightsViewModel::class.java)
+    }
+
+    private fun collectAndRefresh() {
         lifecycleScope.launch {
             try {
                 val cal = Calendar.getInstance().apply {
@@ -62,27 +90,9 @@ class MainActivity : ComponentActivity() {
                 appsViewModel.refresh()
                 insightsViewModel.refresh()
             } catch (e: Exception) {
-                Log.e(TAG, "Initial collection failed", e)
+                Log.e(TAG, "Collection failed", e)
             }
         }
-
-        setContent {
-            UsageAnalyticsTheme {
-                Surface(modifier = Modifier.fillMaxSize()) {
-                    AppNavigation(
-                        dashboardViewModel = dashboardViewModel,
-                        appsViewModel = appsViewModel,
-                        insightsViewModel = insightsViewModel
-                    )
-                }
-            }
-        }
-    }
-
-    private fun initViewModels() {
-        dashboardViewModel = ViewModelProvider(this).get(DashboardViewModel::class.java)
-        appsViewModel = ViewModelProvider(this).get(AppsViewModel::class.java)
-        insightsViewModel = ViewModelProvider(this).get(InsightsViewModel::class.java)
     }
 
     override fun onDestroy() {
