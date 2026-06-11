@@ -12,7 +12,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.PhoneAndroid
 import androidx.compose.material.icons.filled.Timeline
-import androidx.compose.material3.Icons
+import androidx.compose.material.icons.Icons
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
